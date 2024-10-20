@@ -1,0 +1,29 @@
+.input {
+    position: relative;
+    width: fit-content;
+    min-width: 143px;
+    height: 40px;
+
+    padding: 15px 12px;
+
+    background: linear-gradient(180deg, rgba(32, 32, 32, 0.6) 0%, rgba(26, 26, 26, 0.6) 100%);
+    backdrop-filter: blur(2px);
+    border-radius: 27px;
+    border: .5px solid #2A2A2A;
+
+    font-family: var(--inter-font);
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    text-transform: capitalize;
+
+    color: #FFFFFF;
+
+    @media screen and (width <=458px) {
+        width: 90px;
+        min-width: 90px;
+        height: 35px;
+        border-radius: 20px;
+        padding: 10px 15px;
+    }
+}

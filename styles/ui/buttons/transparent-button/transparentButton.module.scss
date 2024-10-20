@@ -1,0 +1,56 @@
+.link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 200px;
+    height: 55px;
+
+    border-radius: 30px;
+    border: .5px solid var(--color-white);
+
+    font-family: var(--inter--font);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    text-transform: capitalize;
+    color: var(--color-white);
+
+    overflow: hidden;
+    cursor: pointer;
+
+    @media screen and (width <=320px) {
+        width: 143px;
+        height: 45px;
+
+        font-size: 15px;
+        line-height: 18px;
+    }
+
+    span {
+        position: absolute;
+        display: block;
+        width: 0;
+        height: 0;
+        border-radius: 100%;
+        background: linear-gradient(179.14deg, #FFFFFF 0.74%, #B79DF6 209.42%);
+        transition: width 0.4s ease-in-out, height 0.4s ease-in-out;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+    }
+
+    &:hover {
+        color: var(--color-purple);
+
+        span {
+            width: 225%;
+            height: 325%;
+        }
+    }
+
+    &:active {
+        background: linear-gradient(179.14deg, #FFFFFF 0.74%, #B79DF6 209.42%);
+    }
+}

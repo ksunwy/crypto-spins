@@ -1,0 +1,142 @@
+:root {
+  --color-white: #ffffff;
+  --color-black: #171717;
+  --color-purple: #3E19B7;
+  --color-purple-light: #C7B7FD;
+  --color-purple-accent: #6843E0;
+
+  --inter-font: "Inter", sans-serif;
+  --gilroy-font: "Gilroy", sans-serif;
+}
+
+.desktop {
+  @media screen and (width <= 458px) {
+    display: none !important;
+  }
+}
+
+.mobile {
+  @media screen and (width > 458px) {
+    display: none !important;
+  }
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -ms-overflow-style: none;
+}
+
+@media only screen and (min-width: 744px) {
+  ::-webkit-scrollbar {
+    height: 2px;
+    width: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(133deg, var(--color-purple-light) -12.13%, var(--color-purple) 126.95%);
+    border-radius: 35px;
+  }
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::selection {
+  color: var(--color-white);
+  background: #483486c9;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+
+.fade-enter-from,
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+html,
+body,
+.app,
+.layout,
+#app {
+  padding: 0;
+  margin: 0;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 100%;
+
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100dvh;
+  color: var(--color-white);
+  background: #2A0F71;
+}
+
+body {
+  overflow-y: visible !important;
+}
+
+a,
+button {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  text-decoration: none;
+  font-family: inherit;
+  font-weight: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: all .3s;
+  display: inline-block;
+}
+
+ul {
+  list-style: none;
+}
+
+input,
+textarea {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  font-family: inherit;
+  color: inherit;
+}
+
+textarea {
+  resize: none;
+  overflow: hidden;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+img,
+picture,
+source,
+video,
+svg {
+  pointer-events: none !important;
+  -webkit-user-drag: none !important;
+  -moz-user-select: none !important;
+  -webkit-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}

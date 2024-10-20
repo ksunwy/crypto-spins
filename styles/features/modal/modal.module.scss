@@ -1,0 +1,119 @@
+.wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+        
+    background: rgba(20, 20, 20, 0.65);
+    backdrop-filter: blur(5px);
+
+    width: 100dvw;
+    height: 100dvh;
+
+    transition: all .3s;
+}
+
+.modal {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    width: 406px;
+    height: 270px;
+
+    background: rgba(19, 10, 49, 0.6);
+    backdrop-filter: blur(25px);
+    border-radius: 20px;
+    border: .5px solid var(--color-purple-light);
+
+    margin: auto;
+    padding: 30px 20px;
+    padding-top: 60px;
+
+    transition: all .3s;
+
+    @media screen and (width <=744px) {
+        width: 300px;
+        height: 210px;    
+        padding: 20px;
+        padding-top: 30px;
+    }
+
+    &__close {
+        position: absolute;
+        top: 21px;
+        right: 22.89px;
+        transition: all .3s;
+
+        @media screen and (width <=744px) {
+            top: 20px;
+            right: 20px;
+        }
+        
+        &:hover {
+            opacity: 0.7;
+        }
+    } 
+    
+    &__logo {
+        position: relative;
+        width: 205.2px;
+        height: 39.97px;
+        margin-bottom: 20px;
+
+        @media screen and (width <=744px) {
+            width: 150.8px;
+            height: 29.38px;
+        }
+    }
+
+    &__button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+
+        width: 100%;
+        height: 50px;
+        background: #25145C;
+        border-radius: 10px;
+        border: .5px solid var(--color-purple-light);
+
+        font-family: var(--inter-font);
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 19px;
+        text-align: center;
+        transition: all .3s;
+
+        &:hover {
+            color: var(--color-purple);
+            background: var(--color-white);
+            border-color: var(--color-white);
+        }
+
+        @media screen and (width <=744px) {
+            height: 45px;
+            font-size: 14px;
+            line-height: 16px;
+        }
+    }
+}
+
+.closed {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none !important;
+}
+
+.open {
+    opacity: 1;
+    z-index: 999;
+}

@@ -1,0 +1,88 @@
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    width: 100dvw;
+    height: 85px;
+
+    padding: 20px 30px;
+
+    background: #281567;
+
+    z-index: 99;
+
+    // @media screen and (744px < width <= 1440px) {
+    // }
+
+    // @media screen and (320px < width <= 744px) {
+    // }
+
+    // @media screen and (width <= 320px) {
+    // }
+    
+    @media screen and (320px < width <= 744px) {
+        padding: 20px;
+    }
+
+    @media screen and (width <= 320px) {
+        height: 61px;
+        padding: 10px;
+    }
+
+    &__left {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        &>span {
+            font-family: var(--inter-font);
+            font-weight: 300;
+            font-size: 12px;
+            line-height: 15px;
+            letter-spacing: -0.01em;
+        
+            color: var(--color-purple-light);
+
+            @media screen and (width <= 320px) {
+                font-size: 8px;
+                line-height: 10px;
+            }
+        }
+    } 
+    
+    &__logo {
+        position: relative;
+        width: 102.14px;
+        height: 20px;
+        
+        @media screen and (width <= 320px) {
+            width: 76.61px;
+            height: 15px;
+        }
+    }    
+    
+    &__right {
+        font-family: var(--inter-font);
+        font-weight: 300;
+        font-size: 12px;
+        line-height: 15px;
+        letter-spacing: -0.01em;
+        
+        color: var(--color-purple-light);
+        transition: all .3s;
+        
+        &:hover {
+            color: var(--color-white);
+        }
+
+        @media screen and (width <= 320px) {
+            font-size: 8px;
+            line-height: 10px;
+        }
+    }
+}
