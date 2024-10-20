@@ -600,15 +600,6 @@
                     opacity: 0;
                 }
             }
-
-            &:active {
-                color: var(--color-purple);
-                background: var(--color-white);
-
-                &::before {
-                    opacity: 0;
-                }
-            }
         }
     }
 }
@@ -663,7 +654,14 @@
     }
 }
 
-.active {
-    background: linear-gradient(179.14deg, #FFFFFF 0.74%, #B79DF6 209.42%) !important;
+.active__button {
+    background: var(--color-white)!important;
+    background-color: var(--color-white)!important;
     color: var(--color-purple);
+
+    &::before {
+        opacity: 0;
+        z-index: 0;
+        visibility: hidden;
+    }
 }

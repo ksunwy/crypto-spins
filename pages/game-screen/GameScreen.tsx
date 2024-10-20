@@ -78,9 +78,9 @@ const GameScreen: FC = () => {
                         <Input id='betSize' value={betSize} onChange={(e) => setBestSize(e.target.value)} className={styles.input__first} />
                     </div>
                     <div className={styles.content__buttons}>
-                        <button onClick={(e) => {e.preventDefault(); setType("1/2")}} aria-pressed={type === "1/2"} aria-label="Set bet to half" className={type === "1/2" ? styles.active : ""}><span>1/2</span></button>
-                        <button onClick={(e) => {e.preventDefault(); setType("2")}} aria-pressed={type === "2"} aria-label="Double the bet" className={type === "2" ? styles.active : ""}><span>2x</span></button>
-                        <button onClick={(e) => {e.preventDefault(); setType("Max")}} aria-pressed={type === "Max"} aria-label="Set bet to maximum" className={type === "Max" ? styles.active : ""}><span>Max</span></button>
+                        <button onClick={(e) => {e.preventDefault(); setType("1/2")}} className={type === "1/2" ? styles.active__button : ""}><span>1/2</span></button>
+                        <button onClick={(e) => {e.preventDefault(); setType("2")}} className={type === "2" ? styles.active__button : ""}><span>2x</span></button>
+                        <button onClick={(e) => {e.preventDefault(); setType("Max")}} className={type === "Max" ? styles.active__button : ""}><span>Max</span></button>
                     </div>
                 </div>
                 <div className='desktop'>
