@@ -12,6 +12,9 @@
   "dependencies": {
     "gsap": "^3.12.5",
     "next": "14.2.15",
+    "@dfinity/agent": "^2.1.2",
+    "@dfinity/candid": "^2.1.2",
+    "@dfinity/principal": "^2.1.2",
     "react": "^18",
     "react-dom": "^18"
   },

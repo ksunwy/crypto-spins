@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -7,6 +7,7 @@ import Modal from "@/features/modal/Modal.tsx";
 import Button from '@/shared/ui/buttons/button/Button.tsx';
 import { formatString } from '@/styles/ui/lib/formatString.ts';
 import { formatNumber } from '@/styles/ui/lib/formatNumber.ts';
+import { getBalance } from '@/shared/lib/canister.ts';
 import styles from "@/styles/widgets/nav/nav.module.scss";
 import className from "@/styles/ui/buttons/purple-button/purpleButton.module.scss";
 
@@ -14,6 +15,7 @@ const Nav: FC = () => {
   const pathname = usePathname();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [balance, setBalance] = useState<number>(0);
 
   const handleConnectClick = () => {
     setIsOpen(true);
@@ -26,6 +28,11 @@ const Nav: FC = () => {
     }
   };
 
+  // useEffect(() => {
+  //   let balance = getBalance();
+  //   console.log(balance);   
+  // }, []);
+
   return (
     <>
       <nav className={`${styles.nav} ${pathname === "/game" && styles.game}`}>
@@ -36,7 +43,7 @@ const Nav: FC = () => {
           <div className={styles.game__left}>
             <div>
               <div>
-                <div><Image src={"/static/png/game-screen/balance__icon.png"} alt="coin" fill sizes="(max-width: 458px) 24px, 40px" /></div>
+                <div><Image src={"/static/png/game-screen/game__icon3.png"} alt="coin" fill sizes="(max-width: 458px) 24px, 40px" /></div>
                 <span>{formatNumber(83567.43)}</span>
               </div>
               <Button onClick={() => handleCopyClick("0x3ВАffffKAS")} className={`${styles.game__code}`} ariaHasPopup>{formatString("0x3ВАffffKAS")}</Button>

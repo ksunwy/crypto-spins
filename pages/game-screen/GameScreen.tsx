@@ -8,12 +8,9 @@ import classNameWhite from "@/styles/ui/buttons/white-button/whiteButton.module.
 import Input from '@/shared/ui/inputs/Input';
 
 const GameScreen: FC = () => {
-
+    const balance = 1000;
     const [type, setType] = useState<string>("");
     const [betSize, setBestSize] = useState<string | number>(0.01);
-    const [winnings, seWinnings] = useState<string | number>(0.01);
-    const [pay, setPay] = useState<string | number>(0.01);
-    const [change, seChange] = useState<string | number>(0.01);
 
     const coinImages = [
         { src: "/static/png/main-screen/coin2.png", alt: "coin", sizes: "(max-width: 1440px) 54px, 74px" },
@@ -22,6 +19,24 @@ const GameScreen: FC = () => {
         { src: "/static/png/main-screen/coin7.png", alt: "coin", sizes: "(max-width: 1440px) 61.19px, 83.9px" },
         { src: "/static/png/main-screen/coin5.png", alt: "coin", sizes: "65.13px" },
     ];
+
+    const handleBetChange = (betType: string) => {
+        setType(betType);
+      
+        switch (betType) {
+          case "1/2":
+            setBestSize((prev) => Math.max(+prev * 0.5, 0)); 
+            break;
+          case "2":
+            setBestSize((prev) => Math.min(+prev * 2, balance));
+            break;
+          case "Max":
+            setBestSize(balance);
+            break;
+          default:
+            break;
+        }
+    };
 
     const handleBetClick = () => {
 
@@ -42,7 +57,7 @@ const GameScreen: FC = () => {
 
       <div className={styles.astronaut}>
           <div className={styles.astronaut__wrapper}>
-            <Image src={"/static/png/game-screen/astronaut.png"} alt='astronaut' fill sizes="(max-width: 1440px) 478.44px, 656px" aria-hidden="true" />
+            <Image src={"/static/png/game-screen/astronaut.png"} alt='astronaut' fill sizes="(max-width: 1440px) 478.44px, 656px" aria-hidden="true" priority />
           </div>
       </div>
 
@@ -74,28 +89,13 @@ const GameScreen: FC = () => {
             <form>
                 <div>
                     <div>
-                        <span>Bet size</span>
-                        <Input id='betSize' value={betSize} onChange={(e) => setBestSize(e.target.value)} className={styles.input__first} />
+                        <label id='bestSize'>Bet size</label>
+                        <Input id='betSize' value={betSize} min={0} onChange={(e) => setBestSize(e.target.value)} className={styles.input__first} />
                     </div>
                     <div className={styles.content__buttons}>
-                        <button onClick={(e) => {e.preventDefault(); setType("1/2")}} className={type === "1/2" ? styles.active__button : ""}><span>1/2</span></button>
-                        <button onClick={(e) => {e.preventDefault(); setType("2")}} className={type === "2" ? styles.active__button : ""}><span>2x</span></button>
-                        <button onClick={(e) => {e.preventDefault(); setType("Max")}} className={type === "Max" ? styles.active__button : ""}><span>Max</span></button>
-                    </div>
-                </div>
-                <div className='desktop'>
-                    <label htmlFor="winnings">Income with winnings</label>
-                    <Input id='winnings' value={winnings} onChange={(e) => seWinnings(e.target.value)} className={`${styles.input__second}`} />
-                </div>
-                <div>
-                    <div>
-                        <label htmlFor="pay" className='desktop'>Pay</label>
-                        <Input id='pay' value={pay} onChange={(e) => setPay(e.target.value)} className={`${styles.input__third}`} />
-                        <Input id='winnings__mobile' value={winnings} onChange={(e) => seWinnings(e.target.value)} className={`${styles.input__second} mobile`} />
-                    </div>
-                    <div>
-                        <label htmlFor="change" className='desktop'>Chance</label>
-                        <Input id='change' value={change} onChange={(e) => seChange(e.target.value)} className={styles.input__fourth} />
+                        <button onClick={(e) => {e.preventDefault(); handleBetChange("1/2")}} className={type === "1/2" ? styles.active__button : ""}><span>1/2</span></button>
+                        <button onClick={(e) => {e.preventDefault(); handleBetChange("2")}} className={type === "2" ? styles.active__button : ""}><span>2x</span></button>
+                        <button onClick={(e) => {e.preventDefault(); handleBetChange("Max")}} className={type === "Max" ? styles.active__button : ""}><span>Max</span></button>
                     </div>
                 </div>
             </form>

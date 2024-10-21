@@ -22,6 +22,7 @@ export interface IPosition {
 
 export interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
     id: string,
+    min?: number,
     value: string | number,
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     className?: string,
