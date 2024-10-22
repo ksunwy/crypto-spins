@@ -8,14 +8,14 @@ import Modal from "@/features/modal/Modal.tsx";
 import { usePrincipal } from "@/app/providers/PrincipalContext.tsx";
 import { decimalFormat } from '@/styles/ui/lib/formatNumber.ts';
 import { authenticateWithIC, initAgent } from '@/features/modal/Modal.tsx';
-import { useBalance } from '@/app/providers/BalanceContext.tsx';
+// import { useBalance } from '@/app/providers/BalanceContext.tsx';
 import { gsap } from 'gsap';
 import styles from '@/styles/pages/game-screen/gameScreen.module.scss';
 import classNameWhite from "@/styles/ui/buttons/white-button/whiteButton.module.scss";
 
 const GameScreen: FC = () => {
   const { principalId, play, deposit, getBalance, setActor } = usePrincipal();
-  const { balance } = useBalance();
+  const { balance } = usePrincipal();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // const [userBalance, setUserBalance] = useState<bigint | null>(balance ?? null);
@@ -65,7 +65,7 @@ const GameScreen: FC = () => {
     }
 };
 
-  const { setBalance } = useBalance();
+  const { setBalance } = usePrincipal();
 
   const handleBetClick = async () => {
     if (!principalId) {

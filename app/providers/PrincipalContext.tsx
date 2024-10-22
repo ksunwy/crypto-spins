@@ -4,10 +4,12 @@ import React, { createContext, useContext, useState, useEffect, FC, ReactNode } 
 
 interface PrincipalContextType {
   principalId: string | null;
-  balance: bigint | null;
+  // balance: bigint | null;
   actor: any;
-  setPrincipalId: (id: string | null) => void;
+  balance: bigint | null;
   setBalance: (balance: bigint | null) => void;
+  setPrincipalId: (id: string | null) => void;
+  // setBalance: (balance: bigint | null) => void;
   setActor: (actor: any) => void;
   deposit: (amount: bigint) => Promise<bigint>;
   withdraw: (principal: any, amount: bigint) => Promise<{ Ok?: bigint; Err?: string }>;
@@ -25,10 +27,46 @@ const LOCAL_STORAGE_KEY_BALANCE = "balance";
 const LOCAL_STORAGE_KEY_ACTOR = "actor"; 
 const EXPIRATION_TIME = 24 * 60 * 60 * 1000; 
 
+const BALANCE_KEY = 'userBalance';
+const EXPIRATION_KEY = 'balanceExpiration'; 
+
 export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [principalId, setPrincipalIdState] = useState<string | null>(null);
-  const [balance, setBalanceState] = useState<bigint | null>(null); 
+  // const [balance, setBalanceState] = useState<bigint | null>(null); 
   const [actor, setActorState] = useState<any | null>(null);
+
+  const [balance, setBalance] = useState<bigint | null>(null);
+
+  useEffect(() => {
+    const storedBalance = localStorage.getItem(BALANCE_KEY);
+    const expiration = localStorage.getItem(EXPIRATION_KEY);
+    
+    if (storedBalance && expiration) {
+      const expirationDate = new Date(parseInt(expiration));
+      const now = new Date();
+
+      if (now < expirationDate) {
+        setBalance(BigInt(storedBalance)); 
+      } else {
+        localStorage.removeItem(BALANCE_KEY); 
+        localStorage.removeItem(EXPIRATION_KEY); 
+      }
+    }
+  }, []);
+
+  const updateBalance = (newBalance: bigint | null) => {
+    setBalance(newBalance);
+    if (newBalance !== null) {
+      localStorage.setItem(BALANCE_KEY, newBalance.toString());
+      const expirationDate = new Date();
+      expirationDate.setHours(expirationDate.getHours() + 24); 
+      localStorage.setItem(EXPIRATION_KEY, expirationDate.getTime().toString());
+    } else {
+      localStorage.removeItem(BALANCE_KEY);
+      localStorage.removeItem(EXPIRATION_KEY);
+    }
+  };
+
 
   const setActor = (newActor: any) => {
     setActorState(newActor);
@@ -40,15 +78,15 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const setBalance = (newBalance: bigint | null) => {
-    setBalanceState(newBalance);
-    if (newBalance !== null) {
-      const expirationDate = new Date().getTime() + EXPIRATION_TIME;
-      localStorage.setItem(LOCAL_STORAGE_KEY_BALANCE, JSON.stringify({ balance: newBalance.toString(), expirationDate }));
-    } else {
-      localStorage.removeItem(LOCAL_STORAGE_KEY_BALANCE);
-    }
-  };
+  // const setBalance = (newBalance: bigint | null) => {
+  //   setBalanceState(newBalance);
+  //   if (newBalance !== null) {
+  //     const expirationDate = new Date().getTime() + EXPIRATION_TIME;
+  //     localStorage.setItem(LOCAL_STORAGE_KEY_BALANCE, JSON.stringify({ balance: newBalance.toString(), expirationDate }));
+  //   } else {
+  //     localStorage.removeItem(LOCAL_STORAGE_KEY_BALANCE);
+  //   }
+  // };
 
   const setPrincipalId = (id: string | null) => {
     setPrincipalIdState(id);
@@ -146,16 +184,16 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
       }
     }
 
-    const storedDataBalance = localStorage.getItem(LOCAL_STORAGE_KEY_BALANCE);
-    if (storedDataBalance) {
-      const { balance, expirationDate } = JSON.parse(storedDataBalance);
-      const now = new Date().getTime();
-      if (now < expirationDate) {
-        setBalanceState(BigInt(balance));
-      } else {
-        localStorage.removeItem(LOCAL_STORAGE_KEY_BALANCE);
-      }
-    }
+    // const storedDataBalance = localStorage.getItem(LOCAL_STORAGE_KEY_BALANCE);
+    // if (storedDataBalance) {
+    //   const { balance, expirationDate } = JSON.parse(storedDataBalance);
+    //   const now = new Date().getTime();
+    //   if (now < expirationDate) {
+    //     setBalanceState(BigInt(balance));
+    //   } else {
+    //     localStorage.removeItem(LOCAL_STORAGE_KEY_BALANCE);
+    //   }
+    // }
 
     const storedActor = localStorage.getItem(LOCAL_STORAGE_KEY_ACTOR);
     if (storedActor) {
@@ -177,9 +215,9 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
         deposit,
         withdraw,
         play,
-        balance, 
+        balance, setBalance: updateBalance,
         actor, 
-        setBalance,
+        // setBalance,
         setActor,
         getBalance,
         getGames,

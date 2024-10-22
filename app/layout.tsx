@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import Nav from "@/widgets/nav/Nav";
 import Footer from "@/widgets/footer/Footer";
 import { PrincipalProvider } from "./providers/PrincipalContext";
-import { BalanceProvider } from "./providers/BalanceContext";
+// import { BalanceProvider } from "./providers/BalanceContext";
 import "./globals.scss";
 
 const gilroy = localFont({
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
 const Providers = ({ children }: {children: React.ReactNode}) => {
   return (
     <PrincipalProvider>
-      <BalanceProvider>
+      {/* <BalanceProvider> */}
         {children}
-      </BalanceProvider>
+      {/* </BalanceProvider> */}
     </PrincipalProvider>
   );
 };

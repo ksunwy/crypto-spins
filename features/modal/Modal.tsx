@@ -6,7 +6,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import { HttpAgent, Actor } from "@dfinity/agent";
 import { idlFactory } from "@/shared/lib/contract.did.ts";
 import { usePrincipal } from "@/app/providers/PrincipalContext.tsx";
-import { useBalance } from "@/app/providers/BalanceContext.tsx";
+// import { useBalance } from "@/app/providers/BalanceContext.tsx";
 import styles from "@/styles/features/modal/modal.module.scss";
 
 const CANISTER_ID = "jeoiu-zqaaa-aaaal-amq2q-cai";
@@ -65,7 +65,7 @@ export const authenticateWithIC = async () => {
 
 const Modal: FC<IModal> = ({ isOpen, setIsOpen }) => {
   const { principalId, setPrincipalId, setActor } = usePrincipal();
-  const { setBalance } = useBalance();
+  const { setBalance } = usePrincipal();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const target = e.target as HTMLElement;

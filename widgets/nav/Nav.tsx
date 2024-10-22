@@ -8,7 +8,7 @@ import Button from '@/shared/ui/buttons/button/Button.tsx';
 import { formatString } from '@/styles/ui/lib/formatString.ts';
 import { formatNumber } from '@/styles/ui/lib/formatNumber.ts';
 import { usePrincipal } from "@/app/providers/PrincipalContext.tsx";
-import { useBalance } from "@/app/providers/BalanceContext.tsx";
+// import { useBalance } from "@/app/providers/BalanceContext.tsx";
 import styles from "@/styles/widgets/nav/nav.module.scss";
 import className from "@/styles/ui/buttons/purple-button/purpleButton.module.scss";
 
@@ -16,7 +16,7 @@ const Nav: FC = () => {
   const pathname = usePathname(); 
   const { principalId } = usePrincipal();
 
-  const { balance } = useBalance();
+  const { balance } = usePrincipal();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleConnectClick = () => {
