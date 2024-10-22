@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Nav from "@/widgets/nav/Nav";
 import Footer from "@/widgets/footer/Footer";
+import { PrincipalProvider } from "./providers/PrincipalContext";
+import { BalanceProvider } from "./providers/BalanceContext";
 import "./globals.scss";
 
 const gilroy = localFont({
@@ -23,6 +25,16 @@ export const metadata: Metadata = {
     "Experience the thrill of CryptoSpins — the ultimate crypto casino. Play now and hit the jackpot with your favorite cryptocurrency!",
 };
 
+const Providers = ({ children }: {children: React.ReactNode}) => {
+  return (
+    <PrincipalProvider>
+      <BalanceProvider>
+        {children}
+      </BalanceProvider>
+    </PrincipalProvider>
+  );
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,9 +43,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${gilroy.className} ${inter.className}`}>
-        <Nav />
-        {children}
-        <Footer />
+        <Providers>
+          <Nav />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

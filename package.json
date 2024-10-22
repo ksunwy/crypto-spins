@@ -10,11 +10,12 @@
     "lint:ci": "next lint"
   },
   "dependencies": {
-    "gsap": "^3.12.5",
-    "next": "14.2.15",
     "@dfinity/agent": "^2.1.2",
+    "@dfinity/auth-client": "^2.1.2",
     "@dfinity/candid": "^2.1.2",
     "@dfinity/principal": "^2.1.2",
+    "gsap": "^3.12.5",
+    "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18"
   },
@@ -22,8 +23,6 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.8",
     "prettier": "3.3.3",
     "sass": "^1.80.1",
     "typescript": "^5"

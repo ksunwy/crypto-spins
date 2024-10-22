@@ -375,6 +375,21 @@
                 @media screen and (width <=458px) {
                     gap: 22.9px;
                 }
+            }
+
+            &>div {
+                display: flex;
+                flex-direction: column;
+                gap: 33.7px;
+
+                margin-top: -120px;
+
+                overflow: hidden;
+
+                @media screen and (width <=458px) {
+                    gap: 22.9px;
+                    margin-top: -80px;
+                }
 
                 &>div {
                     position: relative;
@@ -664,5 +679,16 @@
         opacity: 0;
         z-index: 0;
         visibility: hidden;
+    }
+}
+
+.slot-item {
+    position: relative;
+    width: 87.41px;
+    height: 87.41px;
+
+    @media screen and (width <=458px) {
+        width: 61.59px;
+        height: 59.41px;
     }
 }
