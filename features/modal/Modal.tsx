@@ -64,8 +64,12 @@ export const authenticateWithIC = async () => {
 };
 
 const Modal: FC<IModal> = ({ isOpen, setIsOpen }) => {
-  const { principalId, setPrincipalId, setActor } = usePrincipal();
-  const { setBalance } = usePrincipal();
+  const context = usePrincipal();
+  if (!context) {
+    return
+    // throw new Error("usePrincipal должен быть использован внутри PrincipalProvider");
+  }
+  const { principalId, setPrincipalId, setActor, setBalance } = context;
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const target = e.target as HTMLElement;

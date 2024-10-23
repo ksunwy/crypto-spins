@@ -14,7 +14,14 @@ import styles from '@/styles/pages/game-screen/gameScreen.module.scss';
 import classNameWhite from "@/styles/ui/buttons/white-button/whiteButton.module.scss";
 
 const GameScreen: FC = () => {
-  const { principalId, play, deposit, getBalance, setActor, balance, setBalance } = usePrincipal();
+  // const { principalId, play, deposit, getBalance, setActor, balance, setBalance } = usePrincipal();
+  const context = usePrincipal();
+if (!context) {
+  return
+  // throw new Error("usePrincipal должен быть использован внутри PrincipalProvider");
+}
+
+const { principalId, play, deposit, getBalance, setActor, balance, setBalance } = context;
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [type, setType] = useState<string>("");

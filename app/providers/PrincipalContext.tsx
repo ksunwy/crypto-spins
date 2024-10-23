@@ -221,8 +221,5 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
 
 export const usePrincipal = () => {
   const context = useContext(PrincipalContext);
-  if (!context) {
-    throw new Error("usePrincipal должен использоваться внутри PrincipalProvider");
-  }
   return context;
 };

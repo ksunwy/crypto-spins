@@ -13,10 +13,14 @@ import styles from "@/styles/widgets/nav/nav.module.scss";
 import className from "@/styles/ui/buttons/purple-button/purpleButton.module.scss";
 
 const Nav: FC = () => {
+  const context = usePrincipal();
+  if (!context) {
+    return
+    // throw new Error("usePrincipal должен быть использован внутри PrincipalProvider");
+  }
   const pathname = usePathname(); 
-  const { principalId } = usePrincipal();
+  const { principalId, balance } = context;
 
-  const { balance } = usePrincipal();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleConnectClick = () => {
