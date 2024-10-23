@@ -1,15 +1,13 @@
-"use client";
+"use client"; 
 
 import React, { createContext, useContext, useState, useEffect, FC, ReactNode } from "react";
 
 interface PrincipalContextType {
   principalId: string | null;
-  // balance: bigint | null;
   actor: any;
   balance: bigint | null;
   setBalance: (balance: bigint | null) => void;
   setPrincipalId: (id: string | null) => void;
-  // setBalance: (balance: bigint | null) => void;
   setActor: (actor: any) => void;
   deposit: (amount: bigint) => Promise<bigint>;
   withdraw: (principal: any, amount: bigint) => Promise<{ Ok?: bigint; Err?: string }>;
@@ -20,24 +18,28 @@ interface PrincipalContextType {
   setWinPercentage: (newPercentage: bigint) => Promise<{ Ok?: null; Err?: string }>;
 }
 
-const PrincipalContext = createContext<PrincipalContextType | undefined>(undefined);
+export const PrincipalContext = createContext<PrincipalContextType | undefined>(undefined);
 
 const LOCAL_STORAGE_KEY_ID = "principalId";
 const LOCAL_STORAGE_KEY_BALANCE = "balance";
 const LOCAL_STORAGE_KEY_ACTOR = "actor"; 
 const EXPIRATION_TIME = 24 * 60 * 60 * 1000; 
-
 const BALANCE_KEY = 'userBalance';
-const EXPIRATION_KEY = 'balanceExpiration'; 
+const EXPIRATION_KEY = 'balanceExpiration';
 
 export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [principalId, setPrincipalIdState] = useState<string | null>(null);
-  // const [balance, setBalanceState] = useState<bigint | null>(null); 
   const [actor, setActorState] = useState<any | null>(null);
-
   const [balance, setBalance] = useState<bigint | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return; 
+
     const storedBalance = localStorage.getItem(BALANCE_KEY);
     const expiration = localStorage.getItem(EXPIRATION_KEY);
     
@@ -46,13 +48,35 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
       const now = new Date();
 
       if (now < expirationDate) {
-        setBalance(BigInt(storedBalance)); 
+        setBalance(BigInt(storedBalance));
       } else {
-        localStorage.removeItem(BALANCE_KEY); 
-        localStorage.removeItem(EXPIRATION_KEY); 
+        localStorage.removeItem(BALANCE_KEY);
+        localStorage.removeItem(EXPIRATION_KEY);
       }
     }
-  }, []);
+
+    const storedActor = localStorage.getItem(LOCAL_STORAGE_KEY_ACTOR);
+    if (storedActor) {
+      const { actor: storedActorData, expirationDate } = JSON.parse(storedActor);
+      const now = new Date().getTime();
+      if (now < expirationDate) {
+        setActorState(storedActorData);
+      } else {
+        localStorage.removeItem(LOCAL_STORAGE_KEY_ACTOR);
+      }
+    }
+
+    const storedDataId = localStorage.getItem(LOCAL_STORAGE_KEY_ID);
+    if (storedDataId) {
+      const { id, expirationDate } = JSON.parse(storedDataId);
+      const now = new Date().getTime();
+      if (now < expirationDate) {
+        setPrincipalIdState(id);
+      } else {
+        localStorage.removeItem(LOCAL_STORAGE_KEY_ID);
+      }
+    }
+  }, [isClient]);
 
   const updateBalance = (newBalance: bigint | null) => {
     setBalance(newBalance);
@@ -67,7 +91,6 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-
   const setActor = (newActor: any) => {
     setActorState(newActor);
     if (newActor) {
@@ -77,16 +100,6 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
       localStorage.removeItem(LOCAL_STORAGE_KEY_ACTOR);
     }
   };
-
-  // const setBalance = (newBalance: bigint | null) => {
-  //   setBalanceState(newBalance);
-  //   if (newBalance !== null) {
-  //     const expirationDate = new Date().getTime() + EXPIRATION_TIME;
-  //     localStorage.setItem(LOCAL_STORAGE_KEY_BALANCE, JSON.stringify({ balance: newBalance.toString(), expirationDate }));
-  //   } else {
-  //     localStorage.removeItem(LOCAL_STORAGE_KEY_BALANCE);
-  //   }
-  // };
 
   const setPrincipalId = (id: string | null) => {
     setPrincipalIdState(id);
@@ -99,6 +112,7 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const deposit = async (amount: bigint): Promise<bigint> => {
+    if (!actor) throw new Error("Actor не установлен");
     const result = await actor.deposit(amount);
     if (typeof result !== 'bigint') {
       throw new Error('Expected a bigint response');
@@ -107,6 +121,7 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const withdraw = async (principal: any, amount: bigint): Promise<{ Ok?: bigint; Err?: string }> => {
+    if (!actor) throw new Error("Actor не установлен");
     const result = await actor.withdraw(principal, amount);
     if (typeof result !== 'object' || result === null) {
       throw new Error('Unexpected response format');
@@ -120,19 +135,19 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const play = async (
-    bet: bigint
-  ): Promise<{ Ok?: { player: any; bet: bigint; result: number[]; payout: bigint }; Err?: string }> => {
+  const play = async (bet: bigint): Promise<{ Ok?: { player: any; bet: bigint; result: number[]; payout: bigint }; Err?: string }> => {
+    if (!actor) throw new Error("Actor не установлен");
     const result: unknown = await actor.play(bet);
-  
+
     if (typeof result === "object" && result !== null && ("Ok" in result || "Err" in result)) {
       return result as { Ok?: { player: any; bet: bigint; result: number[]; payout: bigint }; Err?: string };
     } else {
       throw new Error("Unexpected response format from actor.play");
     }
   };
-  
+
   const getBalance = async (): Promise<bigint> => {
+    if (!actor) throw new Error("Actor не установлен");
     const result = await actor.get_balance();
     if (typeof result !== 'bigint') {
       throw new Error('Unexpected response type: expected bigint');
@@ -141,6 +156,7 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const getGames = async (): Promise<Array<{ player: any; bet: bigint; result: number[]; payout: bigint }>> => {
+    if (!actor) throw new Error("Actor не установлен");
     const result = await actor.get_games();
     if (!Array.isArray(result)) {
       throw new Error('Unexpected response type: expected an array');
@@ -154,6 +170,7 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const getContractBalance = async (): Promise<bigint> => {
+    if (!actor) throw new Error("Actor не установлен");
     const result = await actor.get_contract_balance();
     if (typeof result !== 'bigint') {
       throw new Error('Unexpected response type: expected bigint');
@@ -162,69 +179,41 @@ export const PrincipalProvider: FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const setWinPercentage = async (newPercentage: bigint): Promise<{ Ok?: null; Err?: string }> => {
+    if (!actor) throw new Error("Actor не установлен");
     const result: unknown = await actor.set_win_percentage(newPercentage);
     if (typeof result === "object" && result !== null && "Ok" in result && "Err" in result) {
-      const { Ok, Err } = result as { Ok?: unknown; Err?: unknown };
-      if ((Ok === null || Ok === undefined) && (typeof Err === "string" || Err === undefined)) {
-        return { Ok: Ok as null, Err: Err as string | undefined };
+      const { Ok, Err } = result as { Ok?: null; Err?: string };
+      if (Err) {
+        throw new Error(Err);
       }
+      return { Ok };
+    } else {
+      throw new Error("Unexpected response format from actor.set_win_percentage");
     }
-    throw new Error("Unexpected response structure from set_win_percentage");
   };
 
-  useEffect(() => {
-    const storedDataId = localStorage.getItem(LOCAL_STORAGE_KEY_ID);
-    if (storedDataId) {
-      const { id, expirationDate } = JSON.parse(storedDataId);
-      const now = new Date().getTime();
-      if (now < expirationDate) {
-        setPrincipalIdState(id);
-      } else {
-        localStorage.removeItem(LOCAL_STORAGE_KEY_ID);
-      }
-    }
+  const value = {
+    principalId,
+    actor,
+    balance,
+    setBalance: updateBalance,
+    setPrincipalId,
+    setActor,
+    deposit,
+    withdraw,
+    play,
+    getBalance,
+    getGames,
+    getContractBalance,
+    setWinPercentage,
+  };
 
-    // const storedDataBalance = localStorage.getItem(LOCAL_STORAGE_KEY_BALANCE);
-    // if (storedDataBalance) {
-    //   const { balance, expirationDate } = JSON.parse(storedDataBalance);
-    //   const now = new Date().getTime();
-    //   if (now < expirationDate) {
-    //     setBalanceState(BigInt(balance));
-    //   } else {
-    //     localStorage.removeItem(LOCAL_STORAGE_KEY_BALANCE);
-    //   }
-    // }
-
-    const storedActor = localStorage.getItem(LOCAL_STORAGE_KEY_ACTOR);
-    if (storedActor) {
-      const { actor: storedActorData, expirationDate } = JSON.parse(storedActor);
-      const now = new Date().getTime();
-      if (now < expirationDate) {
-        setActorState(storedActorData);
-      } else {
-        localStorage.removeItem(LOCAL_STORAGE_KEY_ACTOR);
-      }
-    }
-  }, []);
+  if (!isClient) {
+    return null;
+  }
 
   return (
-    <PrincipalContext.Provider
-      value={{
-        principalId,
-        setPrincipalId,
-        deposit,
-        withdraw,
-        play,
-        balance, setBalance: updateBalance,
-        actor, 
-        // setBalance,
-        setActor,
-        getBalance,
-        getGames,
-        getContractBalance,
-        setWinPercentage,
-      }}
-    >
+    <PrincipalContext.Provider value={value}>
       {children}
     </PrincipalContext.Provider>
   );

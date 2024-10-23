@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useRef } from 'react';
+import { FC, useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Button from '@/shared/ui/buttons/button/Button';
 import Input from '@/shared/ui/inputs/Input';
@@ -8,44 +8,36 @@ import Modal from "@/features/modal/Modal.tsx";
 import { usePrincipal } from "@/app/providers/PrincipalContext.tsx";
 import { decimalFormat } from '@/styles/ui/lib/formatNumber.ts';
 import { authenticateWithIC, initAgent } from '@/features/modal/Modal.tsx';
-// import { useBalance } from '@/app/providers/BalanceContext.tsx';
+import { coinImages, playImages } from '@/shared/lib/ImagesLinks.ts';
 import { gsap } from 'gsap';
 import styles from '@/styles/pages/game-screen/gameScreen.module.scss';
 import classNameWhite from "@/styles/ui/buttons/white-button/whiteButton.module.scss";
 
 const GameScreen: FC = () => {
-  const { principalId, play, deposit, getBalance, setActor } = usePrincipal();
-  const { balance } = usePrincipal();
+  const { principalId, play, deposit, getBalance, setActor, balance, setBalance } = usePrincipal();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  // const [userBalance, setUserBalance] = useState<bigint | null>(balance ?? null);
   const [type, setType] = useState<string>("");
   const [betSize, setBetSize] = useState<string | number>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<number[]>([]);
 
+  const [shuffledImages, setShuffledImages] = useState<number[][]>([[], [], []]);
+
+  useEffect(() => {
+    const shuffleArray = (array: any[]) => array.sort(() => Math.random() - 0.5);
+
+    const shuffled = [shuffleArray([...playImages]), shuffleArray([...playImages]), shuffleArray([...playImages])];
+    setShuffledImages(shuffled);
+
+    gsap.to(".coin1", { y: 25, duration: 2.5, scale: .9, ease: "expoScale(0.5,7,none)",  repeat: -1, yoyo: true });
+    gsap.to(".coin2", { y: -30, duration: 3, ease: "power2.out",  repeat: -1, yoyo: true });
+    gsap.to(".coin3", { y: -30, duration: 2.4, scale: .8, ease: "power1.out",  repeat: -1, yoyo: true });
+    gsap.to(".coin4", { y: 30, duration: 3, ease: "power2.out",  repeat: -1, yoyo: true });
+    gsap.to(".coin5", { y: -25, duration: 2.5, ease: "power2.out",  repeat: -1, yoyo: true });
+  }, []);
+
   const slotRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
-
-  const coinImages = [
-    { src: "/static/png/main-screen/coin2.png", alt: "coin", sizes: "(max-width: 1440px) 54px, 74px" },
-    { src: "/static/png/main-screen/coin4.png", alt: "coin", sizes: "(max-width: 1440px) 38px, 52px" },
-    { src: "/static/png/main-screen/coin3.png", alt: "coin", sizes: "(max-width: 1440px) 104.83px, 104px" },
-    { src: "/static/png/main-screen/coin7.png", alt: "coin", sizes: "(max-width: 1440px) 61.19px, 83.9px" },
-    { src: "/static/png/main-screen/coin5.png", alt: "coin", sizes: "65.13px" },
-  ];
-
-  const playImages = [
-    { src: "/static/png/game-screen/game__icon1.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-    { src: "/static/png/game-screen/game__icon2.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-    { src: "/static/png/game-screen/game__icon3.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-    { src: "/static/png/game-screen/game__icon4.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-    { src: "/static/png/game-screen/game__icon5.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-    { src: "/static/png/game-screen/game__icon1.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-    { src: "/static/png/game-screen/game__icon2.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-    { src: "/static/png/game-screen/game__icon3.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-    { src: "/static/png/game-screen/game__icon4.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-    { src: "/static/png/game-screen/game__icon5.png", alt: "coin", sizes: "(max-width: 458px) 61.59px, 87.41px" },
-  ];
 
   const handleBetChange = (betType: string) => {
     setType(betType);
@@ -63,9 +55,7 @@ const GameScreen: FC = () => {
       default:
         break;
     }
-};
-
-  const { setBalance } = usePrincipal();
+  };
 
   const handleBetClick = async () => {
     if (!principalId) {
@@ -104,10 +94,6 @@ const GameScreen: FC = () => {
     }
   };
 
-  const shuffleArray = (array: any[]) => {
-    return array.sort(() => Math.random() - 0.5);
-  };
-
   const animateSlots = (results: number[]) => {
     results.forEach((result, index) => {
       const slot = slotRefs[index].current;
@@ -118,7 +104,7 @@ const GameScreen: FC = () => {
 
       const selectedOption = result;
       const itemHeight = 117;
-      const animationSpeed = 0.5;
+      const animationSpeed = 0.2;
 
       gsap.to(slot, {
         y: `-${itemHeight * totalItems}px`,
@@ -178,40 +164,29 @@ const GameScreen: FC = () => {
             <span aria-live="polite">{decimalFormat(5698.88)}</span>
           </div>
           <div className='images'>
-            <div ref={slotRefs[0]}>
-              {shuffleArray(playImages).map((coin, index) => (
-                <div key={index}>
-                  <Image className='item' src={coin.src} alt={coin.alt} fill sizes="(max-width: 458px) 61.59px, 87.41px" />
-                </div>
-              ))}
-            </div>
-            <div ref={slotRefs[1]}>
-              {shuffleArray(playImages).map((coin, index) => (
-                <div key={index}>
-                  <Image className='item' src={coin.src} alt={coin.alt} fill sizes="(max-width: 458px) 61.59px, 87.41px" />
-                </div>
-              ))}
-            </div>
-            <div ref={slotRefs[2]}>
-              {shuffleArray(playImages).map((coin, index) => (
-                <div key={index}>
-                  <Image className='item' src={coin.src} alt={coin.alt} fill sizes="(max-width: 458px) 61.59px, 87.41px" />
-                </div>
-              ))}
-            </div>
+            {shuffledImages.map((images, columnIndex) => (
+              <div key={columnIndex} ref={slotRefs[columnIndex]}>
+                {images.map((coin, index) => (
+                  <div key={index}>
+                    {/* @ts-ignore */}
+                    <Image className='item' src={coin.src} alt={coin.alt} fill sizes="(max-width: 458px) 61.59px, 87.41px" />
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
         <div className={styles.content__right}>
           <form>
             <div>
               <div>
-                <label htmlFor='bestSize'>Bet size</label>
+                <label htmlFor='betSize'>Bet size</label>
                 <Input id='betSize' max={Number(balance)} value={betSize} min={0}  onChange={handleBetValueChange} className={styles.input__first} />
               </div>
               <div className={styles.content__buttons}>
-              <button onClick={(e) => {e.preventDefault(); handleBetChange("1/2")}} className={type === "1/2" ? styles.active__button : ""}><span>1/2</span></button>
-              <button onClick={(e) => {e.preventDefault(); handleBetChange("2")}} className={type === "2" ? styles.active__button : ""}><span>2x</span></button>
-              <button onClick={(e) => {e.preventDefault(); handleBetChange("Max")}} className={type === "Max" ? styles.active__button : ""}><span>Max</span></button>
+                <button onClick={(e) => {e.preventDefault(); handleBetChange("1/2")}} className={type === "1/2" ? styles.active__button : ""}><span>1/2</span></button>
+                <button onClick={(e) => {e.preventDefault(); handleBetChange("2")}} className={type === "2" ? styles.active__button : ""}><span>2x</span></button>
+                <button onClick={(e) => {e.preventDefault(); handleBetChange("Max")}} className={type === "Max" ? styles.active__button : ""}><span>Max</span></button>
               </div>
             </div>
           </form>

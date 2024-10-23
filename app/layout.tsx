@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+// import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Nav from "@/widgets/nav/Nav";
@@ -19,21 +20,11 @@ const gilroy = localFont({
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Crypto Spins",
-  description:
-    "Experience the thrill of CryptoSpins — the ultimate crypto casino. Play now and hit the jackpot with your favorite cryptocurrency!",
-};
-
-const Providers = ({ children }: {children: React.ReactNode}) => {
-  return (
-    <PrincipalProvider>
-      {/* <BalanceProvider> */}
-        {children}
-      {/* </BalanceProvider> */}
-    </PrincipalProvider>
-  );
-};
+// export const metadata: Metadata = {
+//   title: "Crypto Spins",
+//   description:
+//     "Experience the thrill of CryptoSpins — the ultimate crypto casino. Play now and hit the jackpot with your favorite cryptocurrency!",
+// };
 
 export default function RootLayout({
   children,
@@ -42,13 +33,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${gilroy.className} ${inter.className}`}>
-        <Providers>
-          <Nav />
-          {children}
-          <Footer />
-        </Providers>
-      </body>
-    </html>
+        <body className={`${gilroy.className} ${inter.className}`}>
+          <PrincipalProvider>
+            <Nav />
+            {children}
+            <Footer />
+          </PrincipalProvider>
+        </body>
+      </html>
   );
 }

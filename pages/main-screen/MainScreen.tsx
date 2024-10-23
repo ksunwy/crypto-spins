@@ -1,3 +1,4 @@
+"use client";
 import { FC, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import Image from "next/image";
@@ -40,6 +41,14 @@ const MainScreen: FC = () => {
         { y: 0, duration: 1.5, ease: 'power2.inOut', }
       ).to(path, {  y: direction * -150, duration: 1.5,  ease: 'power2.inOut', });
     });
+
+    gsap.to(".coin1", { y: 25, duration: 2.5, scale: .9, ease: "expoScale(0.5,7,none)",  repeat: -1, yoyo: true, });
+    gsap.to(".coin2", { y: -30, duration: 3,  ease: "power2.out",  repeat: -1, yoyo: true, });
+    gsap.to(".coin3", { y: -30, duration: 2.4, scale: .8,  ease: "power1.out",  repeat: -1, yoyo: true, });
+    gsap.to(".coin4", { y: 30, duration: 3,  ease: "power2.out",  repeat: -1, yoyo: true, });
+    gsap.to(".coin5", { y: -25, duration: 2.5,  ease: "power2.out",  repeat: -1, yoyo: true, });
+    gsap.to(".coin6", { y: -18, duration: 1.8,  ease: "power2.out",  repeat: -1, yoyo: true, });
+    gsap.to(".coin7", { y: -18, duration: 1.9,  ease: "power1.out",  repeat: -1, yoyo: true, });
   }, []);
 
   return (
