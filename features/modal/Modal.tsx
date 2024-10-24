@@ -6,6 +6,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import { HttpAgent, Actor } from "@dfinity/agent";
 import { idlFactory } from "@/shared/lib/contract.did.ts";
 import { usePrincipal } from "@/app/providers/PrincipalContext.tsx";
+import { useActorStore } from '@/app/store/store.ts';
 // import { useBalance } from "@/app/providers/BalanceContext.tsx";
 import styles from "@/styles/features/modal/modal.module.scss";
 
@@ -69,7 +70,7 @@ const Modal: FC<IModal> = ({ isOpen, setIsOpen }) => {
     return
     // throw new Error("usePrincipal должен быть использован внутри PrincipalProvider");
   }
-  const { principalId, setPrincipalId, setActor, setBalance } = context;
+  const { setPrincipalId, setActor, setBalance } = context;
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const target = e.target as HTMLElement;
@@ -77,25 +78,35 @@ const Modal: FC<IModal> = ({ isOpen, setIsOpen }) => {
     setIsOpen(false);
   };
 
+
   const handleLoginClick = async () => {
     try {
       const identity = await authenticateWithIC();
       const newActor = await initAgent(identity);
       setActor(newActor);
-      
+
+      const depositMethod = newActor.deposit;
+      const playMethod = newActor.play;
+
+      //@ts-ignore
+      useActorStore.getState().setActorMethods(depositMethod, playMethod);
       //@ts-ignore
       const principal = identity.getPrincipal();
+      useActorStore.getState().setPrincipalId(principal.toText());
+      // console.log(newActor);
+      
+      //@ts-ignore
+      // const principal = identity.getPrincipal();
       setPrincipalId(principal.toText());
-  
+
       const balance: unknown = await newActor.get_balance();
       if (typeof balance === "bigint") {
         setBalance(balance);
-        // setBalance(balance);
         console.log("Actor balance:", balance);
       } else {
         console.error("Ошибка получения баланса");
       }
-  
+
       console.log("Principal ID:", principal.toText());
     } catch (error) {
       console.error("Ошибка аутентификации:", error);

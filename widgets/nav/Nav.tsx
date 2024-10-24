@@ -16,7 +16,6 @@ const Nav: FC = () => {
   const context = usePrincipal();
   if (!context) {
     return
-    // throw new Error("usePrincipal должен быть использован внутри PrincipalProvider");
   }
   const pathname = usePathname(); 
   const { principalId, balance } = context;

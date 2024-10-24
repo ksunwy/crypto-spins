@@ -5,6 +5,7 @@ import Image from "next/image";
 import Modal from "@/features/modal/Modal.tsx";
 import Button from '@/shared/ui/buttons/button/Button.tsx';
 import TransparentButton from "@/shared/ui/buttons/transparent-button/TransparentButton.tsx";
+import { usePrincipal } from "@/app/providers/PrincipalContext.tsx";
 import styles from "@/styles/pages/main-screen/mainScreen.module.scss";
 import classNameWhite from "@/styles/ui/buttons/white-button/whiteButton.module.scss";
 import classNameTransparent from "@/styles/ui/buttons/transparent-button/transparentButton.module.scss";
@@ -20,13 +21,15 @@ const coinImages = [
 ];
 
 const MainScreen: FC = () => {
+  const context = usePrincipal();
+if (!context) {
+  return
+}
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
   const handleConnectClick = () => {
     setIsOpen(true);
   };
-
 
   useEffect(() => {
     const paths = document.querySelectorAll('svg path');

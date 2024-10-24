@@ -102,17 +102,22 @@ const { principalId, play, deposit, getBalance, setActor, balance, setBalance } 
   };
 
   const animateSlots = (results: number[]) => {
+    const firstResult = results[0];
+    const firstSlot = slotRefs[0].current;
+    if (!firstSlot) return;
+  
+    const itemHeight = 117;
+    const animationSpeed = 0.2;
+  
     results.forEach((result, index) => {
       const slot = slotRefs[index].current;
       if (!slot) return;
-
+  
       const options = Array.from(slot.querySelectorAll('div'));
       const totalItems = options.length;
-
-      const selectedOption = result;
-      const itemHeight = 117;
-      const animationSpeed = 0.2;
-
+  
+      const selectedOption = firstResult;
+  
       gsap.to(slot, {
         y: `-${itemHeight * totalItems}px`,
         duration: animationSpeed,
@@ -123,7 +128,7 @@ const { principalId, play, deposit, getBalance, setActor, balance, setBalance } 
           }, {
             y: `-${(selectedOption + 1) * itemHeight}px`,
             duration: 2 + index,
-            ease: "power2.out",
+            ease: "elastic.out(1, 0.3)",
             onUpdate: () => {
               if (parseFloat(String(gsap.getProperty(slot, 'y'))) > -(totalItems * itemHeight - itemHeight)) {
                 gsap.set(slot, { y: `+=${itemHeight}px` });
@@ -134,6 +139,7 @@ const { principalId, play, deposit, getBalance, setActor, balance, setBalance } 
       });
     });
   };
+  
 
   const handleBetValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newBetSize = parseFloat(e.target.value);
