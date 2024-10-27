@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useRef, useEffect } from 'react';
+import { FC, useState, useRef, useEffect, use } from 'react';
 import Image from 'next/image';
 import Button from '@/shared/ui/buttons/button/Button';
 import Input from '@/shared/ui/inputs/Input';
@@ -14,21 +14,19 @@ import styles from '@/styles/pages/game-screen/gameScreen.module.scss';
 import classNameWhite from "@/styles/ui/buttons/white-button/whiteButton.module.scss";
 
 const GameScreen: FC = () => {
-  // const { principalId, play, deposit, getBalance, setActor, balance, setBalance } = usePrincipal();
   const context = usePrincipal();
 if (!context) {
   return
-  // throw new Error("usePrincipal должен быть использован внутри PrincipalProvider");
 }
-
-const { principalId, play, deposit, getBalance, setActor, balance, setBalance } = context;
-
+// GameScreen.tsx:90 Error: RangeError: The number 0.1 cannot be converted to a BigInt because it is not an integer
+const { principalId, play, deposit, getBalance, setActor,  setBalance } = context;
+// balance,
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [type, setType] = useState<string>("");
   const [betSize, setBetSize] = useState<string | number>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<number[]>([]);
-
+let balance = 10000000000;
   const [shuffledImages, setShuffledImages] = useState<number[][]>([[], [], []]);
 
   useEffect(() => {
@@ -72,8 +70,10 @@ const { principalId, play, deposit, getBalance, setActor, balance, setBalance } 
 
     setIsLoading(true);
     try {
-      await deposit(BigInt(+betSize));
-      const result = await play(BigInt(+betSize));
+      const betSizeInt = BigInt(Math.floor(Number(betSize)));
+
+      await deposit(betSizeInt);
+      const result = await play(betSizeInt);
       console.log("Result from play:", result);
 
       const outcome = result.Ok?.result;
@@ -93,6 +93,7 @@ const { principalId, play, deposit, getBalance, setActor, balance, setBalance } 
         const identity = await authenticateWithIC();
         const newActor = await initAgent(identity);
         setActor(newActor);
+        setIsOpen(false);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -101,12 +102,19 @@ const { principalId, play, deposit, getBalance, setActor, balance, setBalance } 
     }
   };
 
+  // useEffect(() => {
+  //   animateSlots([4, 4, 1]);
+
+
+  //   setTimeout(() => {
+  //     animateSlots([1, 4, 1]);
+  //   }, 3000);
+  // }, [])
+
   const animateSlots = (results: number[]) => {
-    const firstResult = results[0];
-    const firstSlot = slotRefs[0].current;
-    if (!firstSlot) return;
-  
-    const itemHeight = 117;
+    const itemHeight = 73;
+    const itemLastHeight = 63;
+    const baseAnimationDuration = 2;
     const animationSpeed = 0.2;
   
     results.forEach((result, index) => {
@@ -116,27 +124,33 @@ const { principalId, play, deposit, getBalance, setActor, balance, setBalance } 
       const options = Array.from(slot.querySelectorAll('div'));
       const totalItems = options.length;
   
-      const selectedOption = firstResult;
+      const isMiddleSlot = index === 1;
+      const isLastSlot = index === results.length - 1;
   
-      gsap.to(slot, {
-        y: `-${itemHeight * totalItems}px`,
-        duration: animationSpeed,
-        ease: "power2.in",
-        onComplete: () => {
-          gsap.fromTo(slot, {
-            y: '0%',
-          }, {
-            y: `-${(selectedOption + 1) * itemHeight}px`,
-            duration: 2 + index,
-            ease: "elastic.out(1, 0.3)",
-            onUpdate: () => {
-              if (parseFloat(String(gsap.getProperty(slot, 'y'))) > -(totalItems * itemHeight - itemHeight)) {
-                gsap.set(slot, { y: `+=${itemHeight}px` });
-              }
-            }
-          });
+      const initialY = isMiddleSlot ? -itemHeight * totalItems : '0%';
+      const targetY = isMiddleSlot
+        ? (result + 1) * itemHeight
+        : -(result + 1) * itemHeight;
+  
+      const duration = isLastSlot ? 0.5 : baseAnimationDuration + index;
+  
+      gsap.fromTo(
+        slot,
+        { y: initialY },
+        {
+          y: targetY,
+          duration: duration,
+          ease: "power1.out(1, 0.3)",
+          onComplete: () => {
+            const finalY = isMiddleSlot
+              ? (result + 1) * itemHeight
+              : isLastSlot
+              ? -(result + 1) * itemLastHeight
+              : -(result + 1) * itemHeight;
+            gsap.set(slot, { y: finalY });
+          },
         }
-      });
+      );
     });
   };
   
@@ -194,7 +208,7 @@ const { principalId, play, deposit, getBalance, setActor, balance, setBalance } 
             <div>
               <div>
                 <label htmlFor='betSize'>Bet size</label>
-                <Input id='betSize' max={Number(balance)} value={betSize} min={0}  onChange={handleBetValueChange} className={styles.input__first} />
+                <Input id='betSize' max={Number(balance)} value={betSize} min={0.1}  onChange={handleBetValueChange} className={styles.input__first} />
               </div>
               <div className={styles.content__buttons}>
                 <button onClick={(e) => {e.preventDefault(); handleBetChange("1/2")}} className={type === "1/2" ? styles.active__button : ""}><span>1/2</span></button>

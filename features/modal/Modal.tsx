@@ -7,11 +7,12 @@ import { HttpAgent, Actor } from "@dfinity/agent";
 import { idlFactory } from "@/shared/lib/contract.did.ts";
 import { usePrincipal } from "@/app/providers/PrincipalContext.tsx";
 import { useActorStore } from '@/app/store/store.ts';
+import { fetchICPBalance } from '@/features/api/fetchICPBalance.ts';
 // import { useBalance } from "@/app/providers/BalanceContext.tsx";
 import styles from "@/styles/features/modal/modal.module.scss";
 
-const CANISTER_ID = "jeoiu-zqaaa-aaaal-amq2q-cai";
-const HOST = "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io";
+const CANISTER_ID = "7dzpt-piaaa-aaaam-adplq-cai";
+const HOST = "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=jeoiu-zqaaa-aaaal-amq2q-cai";
 
 // const createActor = (canisterId: string, agent: HttpAgent) => {
 //   return Actor.createActor(idlFactory, {
@@ -36,11 +37,11 @@ export const initAgent = async (identity: any) => {
     host: HOST,
   });
 
-  await agent.fetchRootKey(); 
+  await agent.fetchRootKey();
 
   const actor = Actor.createActor(idlFactory, {
     agent,
-    canisterId: CANISTER_ID, 
+    canisterId: CANISTER_ID,
   });
 
   return actor;
@@ -68,7 +69,6 @@ const Modal: FC<IModal> = ({ isOpen, setIsOpen }) => {
   const context = usePrincipal();
   if (!context) {
     return
-    // throw new Error("usePrincipal должен быть использован внутри PrincipalProvider");
   }
   const { setPrincipalId, setActor, setBalance } = context;
 
@@ -78,23 +78,32 @@ const Modal: FC<IModal> = ({ isOpen, setIsOpen }) => {
     setIsOpen(false);
   };
 
-
   const handleLoginClick = async () => {
     try {
       const identity = await authenticateWithIC();
       const newActor = await initAgent(identity);
       setActor(newActor);
+      console.log(newActor);
 
       const depositMethod = newActor.deposit;
       const playMethod = newActor.play;
 
       //@ts-ignore
       useActorStore.getState().setActorMethods(depositMethod, playMethod);
+
       //@ts-ignore
       const principal = identity.getPrincipal();
       useActorStore.getState().setPrincipalId(principal.toText());
-      // console.log(newActor);
-      
+      setPrincipalId(principal.toText());
+
+      // const balance = await fetchICPBalance(principal.toText());
+      // if (balance !== null) {
+      //   setBalance(balance);
+      //   console.log("ICP Ledger balance:", balance);
+      // } else {
+      //   console.error("Error getting balance");
+      // }
+
       //@ts-ignore
       // const principal = identity.getPrincipal();
       setPrincipalId(principal.toText());
@@ -104,17 +113,17 @@ const Modal: FC<IModal> = ({ isOpen, setIsOpen }) => {
         setBalance(balance);
         console.log("Actor balance:", balance);
       } else {
-        console.error("Ошибка получения баланса");
+        console.error("Error getting balance");
       }
 
       console.log("Principal ID:", principal.toText());
     } catch (error) {
-      console.error("Ошибка аутентификации:", error);
+      console.error("Login error:", error);
     } finally {
       setIsOpen(false);
     }
   };
-  
+
   return (
     <div
       onClick={handleClick}
@@ -141,7 +150,7 @@ const Modal: FC<IModal> = ({ isOpen, setIsOpen }) => {
             width={27.1}
             height={12.75}
           />
-          Войти через Internet Identity
+          Log In via Internet Identity
         </button>
       </div>
     </div>

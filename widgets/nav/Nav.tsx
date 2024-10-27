@@ -4,9 +4,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Modal from "@/features/modal/Modal.tsx";
+import LogOutModal from "@/features/modal/LogOutModal.tsx";
 import Button from '@/shared/ui/buttons/button/Button.tsx';
 import { formatString } from '@/styles/ui/lib/formatString.ts';
-import { formatNumber } from '@/styles/ui/lib/formatNumber.ts';
+// import { formatNumber } from '@/styles/ui/lib/formatNumber.ts';
 import { usePrincipal } from "@/app/providers/PrincipalContext.tsx";
 // import { useBalance } from "@/app/providers/BalanceContext.tsx";
 import styles from "@/styles/widgets/nav/nav.module.scss";
@@ -21,17 +22,27 @@ const Nav: FC = () => {
   const { principalId, balance } = context;
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpenLogOut, setIsOpenLogOut] = useState<boolean>(false);
 
   const handleConnectClick = () => {
     setIsOpen(true);
   };
 
-  const handleCopyClick = (button: string | null) => {
-    if (button) {
-      const textToCopy = button || "";
-      navigator.clipboard.writeText(textToCopy);
-    }
+  const handleLogOutClick = () => {
+    setIsOpenLogOut(true);
   };
+
+  // const handleCopyClick = (button: string | null) => {
+  //   if (button) {
+  //     const textToCopy = button || "";
+  //     navigator.clipboard.writeText(textToCopy);
+  //   }
+  // }; 
+
+  function formatNumber(value: number): string {
+    const formattedNumber = (Number(value) / 100000000).toFixed(10);
+    return formattedNumber;
+  }  
 
   return (
     <>
@@ -46,7 +57,7 @@ const Nav: FC = () => {
                 <div><Image src={"/static/png/game-screen/game__icon3.png"} alt="coin" fill sizes="(max-width: 458px) 24px, 40px" /></div>
                 <span>{formatNumber(Number(balance === null ? 0 : balance))}</span>
               </div>
-              <Button onClick={() => handleCopyClick(principalId)} className={`${styles.game__code}`} ariaHasPopup>{formatString(principalId)}</Button>
+              <Button onClick={handleLogOutClick} className={`${styles.game__code}`} ariaHasPopup>{formatString(principalId)}</Button>
             </div>
             <div className={styles.user}>
               <div className={styles.user__logo}>
@@ -59,6 +70,7 @@ const Nav: FC = () => {
         )}
       </nav>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <LogOutModal isOpen={isOpenLogOut} setIsOpen={setIsOpenLogOut} />
     </>
   )
 }

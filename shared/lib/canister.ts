@@ -2,7 +2,7 @@ import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory } from "@/shared/lib/contract.did.ts";
 import { type PlayResult, type Game } from "@/shared/types/type";
 
-const canisterId = "jeoiu-zqaaa-aaaal-amq2q-cai";
+const canisterId = "7dzpt-piaaa-aaaam-adplq-cai";
 
 // Создание агента для взаимодействия с канистрой
 const createActor = (canisterId: string, agent: HttpAgent) => {
