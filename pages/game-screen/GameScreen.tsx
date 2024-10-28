@@ -18,15 +18,15 @@ const GameScreen: FC = () => {
 if (!context) {
   return
 }
-// GameScreen.tsx:90 Error: RangeError: The number 0.1 cannot be converted to a BigInt because it is not an integer
-const { principalId, play, deposit, getBalance, setActor,  setBalance } = context;
+
+const { principalId, play, deposit, getBalance, setActor, actor, balance, setBalance } = context;
 // balance,
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [type, setType] = useState<string>("");
   const [betSize, setBetSize] = useState<string | number>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<number[]>([]);
-let balance = 10000000000;
+// let balance = 10000000000;
   const [shuffledImages, setShuffledImages] = useState<number[][]>([[], [], []]);
 
   useEffect(() => {
@@ -70,7 +70,7 @@ let balance = 10000000000;
 
     setIsLoading(true);
     try {
-      const betSizeInt = BigInt(Math.floor(Number(betSize)));
+      const betSizeInt = BigInt(Math.floor(Number(betSize) * 100000000));
 
       await deposit(betSizeInt);
       const result = await play(betSizeInt);
@@ -112,47 +112,87 @@ let balance = 10000000000;
   // }, [])
 
   const animateSlots = (results: number[]) => {
-    const itemHeight = 73;
-    const itemLastHeight = 63;
-    const baseAnimationDuration = 2;
-    const animationSpeed = 0.2;
-  
     results.forEach((result, index) => {
       const slot = slotRefs[index].current;
       if (!slot) return;
   
       const options = Array.from(slot.querySelectorAll('div'));
       const totalItems = options.length;
+      const selectedOption = result;
+      const itemHeight = 117;
+      const animationSpeed = 0.5;
   
       const isMiddleSlot = index === 1;
-      const isLastSlot = index === results.length - 1;
   
-      const initialY = isMiddleSlot ? -itemHeight * totalItems : '0%';
-      const targetY = isMiddleSlot
-        ? (result + 1) * itemHeight
-        : -(result + 1) * itemHeight;
-  
-      const duration = isLastSlot ? 0.5 : baseAnimationDuration + index;
-  
-      gsap.fromTo(
-        slot,
-        { y: initialY },
-        {
-          y: targetY,
-          duration: duration,
-          ease: "power1.out(1, 0.3)",
-          onComplete: () => {
-            const finalY = isMiddleSlot
-              ? (result + 1) * itemHeight
-              : isLastSlot
-              ? -(result + 1) * itemLastHeight
-              : -(result + 1) * itemHeight;
-            gsap.set(slot, { y: finalY });
-          },
+      gsap.to(slot, {
+        y: `-${itemHeight * totalItems}px`,
+        duration: animationSpeed,
+        ease: "power2.in",
+        onComplete: () => {
+          gsap.fromTo(slot, 
+            { y: '0%' }, 
+            {
+              y: isMiddleSlot 
+                ? `${(selectedOption + 1) * itemHeight}px`
+                : `-${(selectedOption + 1) * itemHeight}px`,
+              duration: 2 + index,
+              ease: "power2.out",
+              onUpdate: () => {
+                const currentY = parseFloat(String(gsap.getProperty(slot, 'y')));
+                if (currentY > -(totalItems * itemHeight - itemHeight)) {
+                  gsap.set(slot, { y: `+=${itemHeight}px` });
+                }
+              }
+            }
+          );
         }
-      );
+      });
     });
   };
+  
+
+  // const animateSlots = (results: number[]) => {
+  //   const itemHeight = 73;
+  //   const itemLastHeight = 63;
+  //   const baseAnimationDuration = 2;
+  //   const animationSpeed = 0.2;
+  
+  //   results.forEach((result, index) => {
+  //     const slot = slotRefs[index].current;
+  //     if (!slot) return;
+  
+  //     const options = Array.from(slot.querySelectorAll('div'));
+  //     const totalItems = options.length;
+  
+  //     const isMiddleSlot = index === 1;
+  //     const isLastSlot = index === results.length - 1;
+  
+  //     const initialY = isMiddleSlot ? -itemHeight * totalItems : '0%';
+  //     const targetY = isMiddleSlot
+  //       ? (result + 1) * itemHeight
+  //       : -(result + 1) * itemHeight;
+  
+  //     const duration = isLastSlot ? 0.5 : baseAnimationDuration + index;
+  
+  //     gsap.fromTo(
+  //       slot,
+  //       { y: initialY },
+  //       {
+  //         y: targetY,
+  //         duration: duration,
+  //         ease: "power1.out(1, 0.3)",
+  //         onComplete: () => {
+  //           const finalY = isMiddleSlot
+  //             ? (result + 1) * itemHeight
+  //             : isLastSlot
+  //             ? -(result + 1) * itemLastHeight
+  //             : -(result + 1) * itemHeight;
+  //           gsap.set(slot, { y: finalY });
+  //         },
+  //       }
+  //     );
+  //   });
+  // };
   
 
   const handleBetValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
