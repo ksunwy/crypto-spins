@@ -111,14 +111,14 @@ const Modal: FC<IModal> = ({ isOpen, setIsOpen }) => {
       const balance: unknown = await newActor.get_balance();
       if (typeof balance === "bigint") {
         setBalance(balance);
-        console.log("Actor balance:", balance);
+        // console.log("Actor balance:", balance);
       } else {
-        console.error("Error getting balance");
+        // console.error("Error getting balance");
       }
 
-      console.log("Principal ID:", principal.toText());
+      // console.log("Principal ID:", principal.toText());
     } catch (error) {
-      console.error("Login error:", error);
+      // console.error("Login error:", error);
     } finally {
       setIsOpen(false);
     }

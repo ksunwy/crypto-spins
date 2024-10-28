@@ -18,7 +18,7 @@ export const fetchICPBalance = async (principalId: string): Promise<bigint | nul
     const data = await response.json();
     return BigInt(data.balance);
   } catch (error) {
-    console.log("Error getting balance с ICP Ledger:", error);
+    // console.log("Error getting balance с ICP Ledger:", error);
     return null;
   }
 };

@@ -74,7 +74,7 @@ const { principalId, play, deposit, getBalance, setActor, actor, balance, setBal
 
       await deposit(betSizeInt);
       const result = await play(betSizeInt);
-      console.log("Result from play:", result);
+      // console.log("Result from play:", result);
 
       const outcome = result.Ok?.result;
       if (outcome) {
@@ -83,7 +83,7 @@ const { principalId, play, deposit, getBalance, setActor, actor, balance, setBal
       }
 
       const updatedBalance = await getBalance();
-      console.log("Updated balance:", updatedBalance);
+      // console.log("Updated balance:", updatedBalance);
       setBalance(updatedBalance);
 
     } catch (error) {
@@ -95,7 +95,7 @@ const { principalId, play, deposit, getBalance, setActor, actor, balance, setBal
         setActor(newActor);
         setIsOpen(false);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error:", "error");
       }
     } finally {
       setIsLoading(false);
