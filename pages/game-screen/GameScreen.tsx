@@ -43,7 +43,7 @@ const { principalId, play, deposit, getBalance, setActor, actor, balance, setBal
   }, []);
 
   const slotRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
-
+  const [isAnimating, setIsAnimating] = useState(false);
   const handleBetChange = (betType: string) => {
     setType(betType);
   
@@ -111,7 +111,71 @@ const { principalId, play, deposit, getBalance, setActor, actor, balance, setBal
   //   }, 3000);
   // }, [])
 
+  // const animateSlots = (results: number[]) => {
+  //   if (isAnimating) return;
+  //   setIsAnimating(true);
+
+  //   const itemHeight = 117;
+  //   const totalItems = slotRefs[0].current!.children.length; // Получаем количество элементов из первого слота
+  //   const maxOffset = -itemHeight * totalItems; // Максимальное смещение вверх
+
+  //   // Запускаем анимацию для каждого слота
+  //   const animations = slotRefs.map((slotRef, index) => {
+  //     const slot = slotRef.current;
+  //     if (!slot) return null;
+
+  //     const direction = index === 1 ? 1 : -1; // Направление анимации для среднего слота
+  //     const initialOffset = direction * -itemHeight * totalItems; // Начальное смещение
+
+  //     // Анимация к верхней позиции
+  //     return gsap.to(slot, {
+  //       y: initialOffset,
+  //       duration: 0.5,
+  //       ease: "power2.in",
+  //     });
+  //   });
+
+  //   // После завершения всех анимаций останавливаем слоты на нужной высоте
+  //   gsap.delayedCall(0.5, () => {
+  //     slotRefs.forEach((slotRef, index) => {
+  //       const slot = slotRef.current;
+  //       if (!slot) return;
+
+  //       const selectedOption = results[index];
+  //       const direction = index === 1 ? 1 : -1; // Определяем направление для остановки
+  //       const targetPosition = direction * -(selectedOption + 1) * itemHeight; // Позиция для остановки
+
+  //       // Остановка всех слотов на одной высоте
+  //       gsap.to(slot, {
+  //         y: targetPosition,
+  //         duration: 1.5,
+  //         ease: "power2.out",
+  //         onComplete: () => {
+  //           if (index === slotRefs.length - 1) {
+  //             setIsAnimating(false); // Сбрасываем состояние анимации после последнего слота
+  //           }
+  //         }
+  //       });
+  //     });
+  //   });
+  // };
+
+  const shuffleImages = () => {
+    const shuffleArray = (array: any[]) => array.sort(() => Math.random() - 0.5);
+    const shuffled = [
+      shuffleArray([...playImages]),
+      shuffleArray([...playImages]),
+      shuffleArray([...playImages]),
+    ];
+    setShuffledImages(shuffled);
+  };
+
   const animateSlots = (results: number[]) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+  
+    shuffleImages();
+  
     results.forEach((result, index) => {
       const slot = slotRefs[index].current;
       if (!slot) return;
@@ -123,28 +187,27 @@ const { principalId, play, deposit, getBalance, setActor, actor, balance, setBal
       const animationSpeed = 0.5;
   
       const isMiddleSlot = index === 1;
+      const directionMultiplier = isMiddleSlot ? 1 : -1;
   
       gsap.to(slot, {
-        y: `-${itemHeight * totalItems}px`,
+        y: directionMultiplier * -itemHeight * totalItems,
         duration: animationSpeed,
         ease: "power2.in",
         onComplete: () => {
-          gsap.fromTo(slot, 
-            { y: '0%' }, 
-            {
-              y: isMiddleSlot 
-                ? `${(selectedOption + 1) * itemHeight}px`
-                : `-${(selectedOption + 1) * itemHeight}px`,
-              duration: 2 + index,
-              ease: "power2.out",
-              onUpdate: () => {
-                const currentY = parseFloat(String(gsap.getProperty(slot, 'y')));
-                if (currentY > -(totalItems * itemHeight - itemHeight)) {
-                  gsap.set(slot, { y: `+=${itemHeight}px` });
-                }
+          gsap.set(slot, {
+            y: directionMultiplier * -(selectedOption * itemHeight),
+          });
+  
+          gsap.to(slot, {
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            onComplete: () => {
+              if (index === slotRefs.length - 1) {
+                setIsAnimating(false);
               }
             }
-          );
+          });
         }
       });
     });
